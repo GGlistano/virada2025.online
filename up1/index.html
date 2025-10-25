@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upsell – Turbo Cash IA</title>
+<style>
+  :root{ --green:#049D43; --red:#d00; --ink:#0f172a; --line:#e5e7eb }
+  *{ box-sizing:border-box }
+  body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink); background:#fff; -webkit-font-smoothing:antialiased; text-align:center }
+  .container{ max-width:780px; margin:0 auto; padding:16px 14px 60px }
+
+  .alert-image{ display:block; width:100%; max-width:720px; height:auto; margin:8px auto 16px }
+  .processing{ margin:12px 0 8px; font-weight:700 }
+  .progress-container{ width:86%; max-width:420px; height:20px; background:#ddd; margin:10px auto 6px; border-radius:8px; overflow:hidden }
+  .progress-bar{ width:68%; height:100%; background:#4CAF50; color:#fff; font-size:12px; line-height:20px; font-weight:700 }
+
+  h2{ margin:10px 0 8px; font-size:26px }
+  h3{ margin:10px 0 10px; font-size:18px }
+  .text-red{ color:var(--red); font-weight:700 }
+  .text-green{ color:var(--green); font-weight:700 }
+  .hero{ max-width:300px; margin:12px auto 6px }
+  .hero img{ display:block; width:100%; height:auto; border-radius:8px }
+  .price{ margin:10px 0 12px; font-size:18px }
+
+  .actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px }
+  .btn{ display:inline-block; border:none; border-radius:10px; padding:14px 22px; font-size:16px; font-weight:800; cursor:pointer; color:#fff; transition:transform .06s ease-in-out, opacity .15s; min-width:220px }
+  .btn:active{ transform:scale(0.98) }
+  .btn-green{ background:var(--green) }
+  .btn-red{ background:var(--red) }
+
+  /* Caixa de pagamento colapsável */
+  .paybox{ width:100%; max-width:520px; margin:18px auto 0; border:1px solid var(--line); border-radius:14px; padding:16px; text-align:left; display:none }
+  .paybox h4{ margin:0 0 10px 0; font-size:18px }
+  .methods{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px }
+  .method{ border:1px solid var(--line); border-radius:10px; padding:12px; text-align:center; cursor:pointer; user-select:none; transition:.15s; font-weight:700 }
+  .method[aria-checked="true"]{ outline:2px solid var(--green); border-color:var(--green) }
+  .field{ margin-top:12px }
+  label{ display:block; font-size:13px; color:#374151; margin-bottom:6px }
+  input[type="tel"]{ width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:10px; font-size:16px }
+  .hint{ font-size:12px; color:#6b7280; margin-top:6px }
+  .err{ color:#b91c1c; font-size:13px; margin-top:8px; display:none }
+  .pay{ width:100%; margin-top:14px; padding:14px 16px; border:0; border-radius:12px; background:var(--green); color:#fff; font-weight:900; font-size:16px; cursor:pointer }
+  .pay:disabled{ opacity:.6; cursor:not-allowed }
+
+  /* Overlay */
+  .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:50 }
+  .spinner{ width:84px; height:84px; border-radius:50%; border:10px solid #86efac; border-top-color:transparent; animation:spin 1s linear infinite }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+
+  .toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#111827; color:#fff; padding:10px 14px; border-radius:10px; font-size:14px; display:none; z-index:60 }
+  .toast.ok{ background:#065f46 }
+  .toast.err{ background:#991b1b }
+
+  @media (max-width:480px){ h2{ font-size:22px } h3{ font-size:16px } .btn{ width:100%; min-width:auto } }
+</style>
+</head>
+<body>
+  <div class="container">
+    <img src="imagem/stop1.png" alt="Não feche esta página — seu pedido ainda não está finalizado" class="alert-image">
+
+    <p class="processing">Processando sua ativação...</p>
+    <div class="progress-container" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68" aria-label="Progresso do pedido">
+      <div class="progress-bar">68%</div>
+    </div>
+
+    <p>ENQUANTO SUA COMPRA PROCESSA…<br>VOCÊ ACABOU DE RECEBER OUTRO <strong>BÔNUS EXCLUSIVO</strong><br> SOMENTE NESTA PÁGINA!</p>
+
+<vturb-smartplayer id="vid-68c72b688d74d8c4f6098eed" style="display: block; margin: 0 auto; width: 100%; "></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/9d93e4b2-3654-4bea-bda0-107c1328d520/players/68c72b688d74d8c4f6098eed/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
+    <h3>⚡ <strong>Multiplique</strong> seus ganhos com o poder da nossa <strong>Inteligência Artificial</strong>!</h3>
+    <p>Você já deu o primeiro passo. Agora é <strong>hora de acelerar</strong> seus lucros com um <strong>assistente inteligente</strong> que faz o <strong>trabalho pesado</strong> por você.</p>
+
+    <div class="actions">
+      <button class="btn btn-green" id="accept">✅ SIM! ACEITO A OFERTA</button>
+      <button class="btn btn-red" id="decline">❌ PULAR</button>
+    </div>
+
+    <!-- Caixa de pagamento que expande ao aceitar -->
+    <div id="paybox" class="paybox" aria-hidden="true">
+      <h4>Concluir pagamento</h4>
+      <div class="methods" id="methods">
+        <div class="method" data-metodo="mpesa" aria-checked="false" role="radio">M‑Pesa</div>
+        <div class="method" data-metodo="emola" aria-checked="false" role="radio">e‑Mola</div>
+      </div>
+
+      <div class="field">
+        <label for="phone">Número (9 dígitos)</label>
+        <input id="phone" type="tel" inputmode="numeric" placeholder="84/85/86/87 xxxxxx" maxlength="9">
+        <div class="hint" id="hint">Selecione M‑Pesa (84/85) ou e‑Mola (86/87).</div>
+        <div class="err" id="err"></div>
+      </div>
+
+      <button class="pay" id="pay">Pagar 349 MZN</button>
+      <p class="hint">Ao clicar em pagar, processaremos o upsell imediatamente.</p>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"><div class="spinner"></div></div>
+  <div class="toast" id="toast"></div>
+
+<script>
+  // ===== Util =====
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const toast = $('#toast');
+  const overlay = $('#overlay');
+  function setToast(msg, ok=false){ toast.textContent = msg; toast.className = 'toast ' + (ok? 'ok':'err'); toast.style.display = 'block'; setTimeout(()=> toast.style.display='none', 3800); }
+
+  // 🎯 DADOS DE RASTREAMENTO GLOBAIS
+  let trackingData = {
+    nome: '',
+    email: '',
+    utm_source: '',
+    utm_medium: '',
+    utm_campaign: '',
+    utm_term: '',
+    utm_content: '',
+    orderId: ''
+  };
+
+  // 🎯 CARREGAR DADOS DE RASTREAMENTO NA INICIALIZAÇÃO
+  async function carregarDadosRastreamento() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('t');
+
+    if (!token) {
+      console.log('⚠️ Nenhum token de rastreamento encontrado');
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://chackout-backendv3-production.up.railway.app/api/get-tracking/${token}`);
+      const result = await response.json();
+
+      if (result.status === 'ok') {
+        trackingData = result.data;
+        console.log('✅ Dados de rastreamento carregados:', trackingData);
+        
+        if (trackingData.phone) {
+          $('#phone').value = trackingData.phone;
+        }
+      } else {
+        console.log('❌ Erro ao carregar dados:', result.message);
+      }
+    } catch (err) {
+      console.log('❌ Erro de conexão ao carregar dados:', err);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', carregarDadosRastreamento);
+
+  // ===== Expandir pagamento ao aceitar =====
+  $('#accept').addEventListener('click', () => {
+    const box = $('#paybox');
+    box.style.display = 'block';
+    box.setAttribute('aria-hidden','false');
+    box.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+
+  // Redirecionar ao recusar
+  $('#decline').addEventListener('click', () => {
+    window.location.href = 'https://visionpay.site/up2/';
+  });
+
+  // ===== Métodos e validação =====
+  let metodo = null;
+  function selectMethod(el){
+    $$('#methods .method').forEach(m=> m.setAttribute('aria-checked','false'));
+    el.setAttribute('aria-checked','true');
+    metodo = el.dataset.metodo;
+    const phone = $('#phone');
+    if(metodo === 'mpesa'){ $('#hint').textContent = 'Para M‑Pesa use prefixo 84 ou 85'; phone.placeholder='84/85 xxxxxx'; }
+    else { $('#hint').textContent = 'Para e‑Mola use prefixo 86 ou 87'; phone.placeholder='86/87 xxxxxx'; }
+    $('#err').style.display='none';
+  }
+  $$('#methods .method').forEach(m => m.addEventListener('click', ()=> selectMethod(m)) );
+
+  function validarNumero(numero, metodo){
+    if(!numero || numero.length!==9) return false;
+    const p = numero.substring(0,2);
+    if(metodo==='mpesa') return p==='84'||p==='85';
+    if(metodo==='emola') return p==='86'||p==='87';
+    return false;
+  }
+
+  function getQuery(name, def=''){ const u = new URL(window.location.href); return u.searchParams.get(name) || def; }
+
+  function gerarOrderIdUpsell() {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    return `UP1-${timestamp}-${random}`;
+  }
+
+  // ===== Pagar =====
+  $('#pay').addEventListener('click', async () => {
+    const err = $('#err'); err.style.display='none';
+    const numero = $('#phone').value.trim().replace(/\D/g,'');
+    if(!metodo){ err.textContent='Selecione um método.'; err.style.display='block'; return; }
+    if(!validarNumero(numero, metodo)){ err.textContent='Número inválido para o método escolhido.'; err.style.display='block'; return; }
+
+    const amount = getQuery('amount','349');
+    const reference = getQuery('ref','upsell1');
+
+    const payload = {
+      phone: numero,
+      metodo,
+      amount: String(amount),
+      reference,
+      orderId: gerarOrderIdUpsell(),
+      email: trackingData.email || '',
+      nome: trackingData.nome || '',
+      whatsapp: numero,
+      utm_source: trackingData.utm_source || '',
+      utm_medium: trackingData.utm_medium || '',
+      utm_campaign: trackingData.utm_campaign || '',
+      utm_term: trackingData.utm_term || '',
+      utm_content: trackingData.utm_content || '',
+      fbc: localStorage.getItem('fbc')||'',
+      fbp: localStorage.getItem('fbp')||''
+    };
+
+    console.log('🎯 Enviando upsell com dados de rastreamento:', payload);
+
+    $('#pay').disabled=true; overlay.style.display='flex';
+    try{
+      const resp = await fetch('https://chackout-backendv3-production.up.railway.app/api/pagar',{
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      });
+      const data = await resp.json().catch(()=>({}));
+      
+      if(resp.ok && (data.status==='ok' || data.success)){
+        setToast(data.message||'Pagamento confirmado! Redirecionando...', true);
+        
+        setTimeout(() => {
+          window.location.href = 'https://visionpay.site/up2/';
+        }, 3000);
+      } else {
+        setToast(data.message||'Falha ao processar o pagamento.');
+      }
+    }catch(e){ 
+      setToast('Erro de conexão. Tenta novamente.'); 
+    }
+    finally{ 
+      $('#pay').disabled=false; 
+      overlay.style.display='none'; 
+    }
+  });
+</script>
+</body></html>
+
+
+
