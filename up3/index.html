@@ -79,14 +79,14 @@
 
     <div class="ribbon">VAGAS LIMITADAS — Se sair desta página, a chance desaparece.</div>
 
-    <!-- === Comentários estilo Facebook (dinâmicos) === -->
+    <!-- === Comentários estilo Facebook (dinâmicos) — com teus avatars === -->
 <div class="fb-comments-wrap">
   <div class="fb-comment" data-minlikes="18" data-maxlikes="42" data-mintime="5" data-maxtime="20">
-    <img class="fb-avatar" src="https://ibb.co/WWdRqgMp" alt="Paulo Lopes">
+    <img class="fb-avatar" alt="Paulo Lopes">
     <div class="fb-body">
       <div class="fb-name">Paulo Lopes</div>
       <div class="fb-text">
-        Cansei de tarefa que paga trocos. No Clube peguei tarefa acima da média hoje — 149 MZN que já voltaram.
+        Cansei de tarefa que paga trocos. No Clube peguei tarefa acima da média — 149 MZN que já voltaram.
       </div>
       <div class="fb-actions">
         <span class="fb-reactions">👍❤️</span>
@@ -96,11 +96,11 @@
   </div>
 
   <div class="fb-comment" data-minlikes="12" data-maxlikes="33" data-mintime="15" data-maxtime="45">
-    <img class="fb-avatar" src="https://ibb.co/CK18XzSX" alt="Luisa Cabral">
+    <img class="fb-avatar" alt="Luisa Cabral">
     <div class="fb-body">
       <div class="fb-name">Luisa Cabral</div>
       <div class="fb-text">
-        Sem orientação eu travava. A mentoria ao vivo deu o caminho e recuperei o valor no mesmo dia.
+        Travava sem direção. A mentoria ao vivo deu o caminho e recuperei o valor no mesmo dia.
       </div>
       <div class="fb-actions">
         <span class="fb-reactions">👍</span>
@@ -110,11 +110,11 @@
   </div>
 
   <div class="fb-comment" data-minlikes="22" data-maxlikes="55" data-mintime="30" data-maxtime="90">
-    <img class="fb-avatar" src="https://ibb.co/psLfL9J" alt="Litos Carlos">
+    <img class="fb-avatar" alt="Litos Carlos">
     <div class="fb-body">
       <div class="fb-name">Litos Carlos</div>
       <div class="fb-text">
-        Eu perdia oportunidades por chegar tarde. Com os alertas antecipados fui o primeiro e fechei parceria.
+        Eu perdia as melhores. Com os alertas antecipados cheguei primeiro e fechei parceria.
       </div>
       <div class="fb-actions">
         <span class="fb-reactions">👍🔥</span>
@@ -143,25 +143,48 @@
 </style>
 
 <script>
-  // Dinâmica: likes e “há X min” aleatórios dentro dos ranges por comentário
+  // Avatares (teus links diretos)
+  const AVATARS = {
+    paulo: "https://i.ibb.co/TBnNpm7q/Imagem-Whats-App-2025-10-25-s-12-29-50-13aa2e42.jpg",
+    luisa: "https://i.ibb.co/QvbQqfxq/Imagem-Whats-App-2025-10-25-s-12-37-46-65f95371.jpg",
+    litos: "https://i.ibb.co/MjCcC3M/Litos.jpg"
+  };
+
+  // SVG fallback (iniciais)
+  const fallbackSVG = (ini) =>
+    'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44'>
+      <rect width='100%' height='100%' rx='22' ry='22' fill='#e5e7eb'/>
+      <text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle'
+            font-family='system-ui,Segoe UI,Roboto,Arial' font-size='16' fill='#374151' font-weight='700'>${ini}</text>
+    </svg>`);
+
+  // Aplica src + fallback
   (function(){
-    const $items = document.querySelectorAll('.fb-comment');
-    const rand = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
+    const comments = document.querySelectorAll('.fb-comment');
+    const names = ["Paulo Lopes", "Luisa Cabral", "Litos Carlos"];
+    const imgs  = [AVATARS.paulo, AVATARS.luisa, AVATARS.litos];
 
-    $items.forEach(el=>{
-      const minLikes = +el.getAttribute('data-minlikes') || 10;
-      const maxLikes = +el.getAttribute('data-maxlikes') || 50;
-      const minTime  = +el.getAttribute('data-mintime')  || 5;   // minutos
-      const maxTime  = +el.getAttribute('data-maxtime')  || 90;
-
-      const likes = rand(minLikes, maxLikes);
-      const mins  = rand(minTime,  maxTime);
-
-      el.querySelector('.fb-likes')?.setAttribute('data-count', likes);
-      el.querySelector('.fb-time')?.setAttribute('data-time', `há ${mins} min`);
+    comments.forEach((el, i)=>{
+      const img = el.querySelector('.fb-avatar');
+      const initials = names[i].split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+      img.setAttribute('referrerpolicy','no-referrer');
+      img.src = imgs[i] || '';
+      img.onerror = () => { img.src = fallbackSVG(initials); };
     });
 
-    // Interação básica: alternar "Gosto"
+    // Likes e “há X min” dinâmicos
+    const rand = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
+    comments.forEach(el=>{
+      const minLikes = +el.getAttribute('data-minlikes') || 10;
+      const maxLikes = +el.getAttribute('data-maxlikes') || 50;
+      const minTime  = +el.getAttribute('data-mintime')  || 5;
+      const maxTime  = +el.getAttribute('data-maxtime')  || 90;
+      el.querySelector('.fb-likes')?.setAttribute('data-count', rand(minLikes, maxLikes));
+      el.querySelector('.fb-time')?.setAttribute('data-time', `há ${rand(minTime, maxTime)} min`);
+    });
+
+    // Toggle Gosto
     document.addEventListener('click', (e)=>{
       if(e.target.tagName==='BUTTON' && e.target.textContent.trim()==='Gosto'){
         const likeSpan = e.target.closest('.fb-body')?.querySelector('.fb-likes');
@@ -174,6 +197,7 @@
     });
   })();
 </script>
+
 
 
     <div class="price">Entre agora no Clube por <strong><span id="btnPrice">149 MZN</span></strong>.</div>
@@ -359,6 +383,7 @@
   });
 </script>
 </body></html>
+
 
 
 
