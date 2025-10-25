@@ -79,6 +79,103 @@
 
     <div class="ribbon">VAGAS LIMITADAS — Se sair desta página, a chance desaparece.</div>
 
+    <!-- === Comentários estilo Facebook (dinâmicos) === -->
+<div class="fb-comments-wrap">
+  <div class="fb-comment" data-minlikes="18" data-maxlikes="42" data-mintime="5" data-maxtime="20">
+    <img class="fb-avatar" src="https://ibb.co/WWdRqgMp" alt="Paulo Lopes">
+    <div class="fb-body">
+      <div class="fb-name">Paulo Lopes</div>
+      <div class="fb-text">
+        Cansei de tarefa que paga trocos. No Clube peguei tarefa acima da média hoje — 149 MZN que já voltaram.
+      </div>
+      <div class="fb-actions">
+        <span class="fb-reactions">👍❤️</span>
+        <span class="fb-likes"></span> · <button>Gosto</button> · <button>Responder</button> · <span class="fb-time"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="fb-comment" data-minlikes="12" data-maxlikes="33" data-mintime="15" data-maxtime="45">
+    <img class="fb-avatar" src="https://ibb.co/CK18XzSX" alt="Luisa Cabral">
+    <div class="fb-body">
+      <div class="fb-name">Luisa Cabral</div>
+      <div class="fb-text">
+        Sem orientação eu travava. A mentoria ao vivo deu o caminho e recuperei o valor no mesmo dia.
+      </div>
+      <div class="fb-actions">
+        <span class="fb-reactions">👍</span>
+        <span class="fb-likes"></span> · <button>Gosto</button> · <button>Responder</button> · <span class="fb-time"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="fb-comment" data-minlikes="22" data-maxlikes="55" data-mintime="30" data-maxtime="90">
+    <img class="fb-avatar" src="https://ibb.co/psLfL9J" alt="Litos Carlos">
+    <div class="fb-body">
+      <div class="fb-name">Litos Carlos</div>
+      <div class="fb-text">
+        Eu perdia oportunidades por chegar tarde. Com os alertas antecipados fui o primeiro e fechei parceria.
+      </div>
+      <div class="fb-actions">
+        <span class="fb-reactions">👍🔥</span>
+        <span class="fb-likes"></span> · <button>Gosto</button> · <button>Responder</button> · <span class="fb-time"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fb-comments-wrap{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:680px;margin:0 auto}
+  .fb-comment{display:flex;gap:10px;padding:10px 10px 12px;border-radius:10px;background:#f6f7f8;margin-bottom:10px}
+  .fb-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:0 0 44px;background:#ddd}
+  .fb-body{flex:1}
+  .fb-name{font-weight:700;font-size:14px;color:#1d2129;margin-bottom:2px}
+  .fb-text{font-size:14px;line-height:1.35;color:#1d2129;background:#fff;border-radius:16px;padding:8px 12px;display:inline-block}
+  .fb-actions{font-size:12px;color:#65676b;margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .fb-actions button{border:0;background:transparent;color:#65676b;cursor:pointer;padding:0;font-weight:600}
+  .fb-reactions{font-size:13px}
+  .fb-likes::after{content: attr(data-count) " ·";}
+  .fb-time::after{content: attr(data-time);}
+  @media (max-width:480px){
+    .fb-text{font-size:13px}
+    .fb-name{font-size:13px}
+  }
+</style>
+
+<script>
+  // Dinâmica: likes e “há X min” aleatórios dentro dos ranges por comentário
+  (function(){
+    const $items = document.querySelectorAll('.fb-comment');
+    const rand = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
+
+    $items.forEach(el=>{
+      const minLikes = +el.getAttribute('data-minlikes') || 10;
+      const maxLikes = +el.getAttribute('data-maxlikes') || 50;
+      const minTime  = +el.getAttribute('data-mintime')  || 5;   // minutos
+      const maxTime  = +el.getAttribute('data-maxtime')  || 90;
+
+      const likes = rand(minLikes, maxLikes);
+      const mins  = rand(minTime,  maxTime);
+
+      el.querySelector('.fb-likes')?.setAttribute('data-count', likes);
+      el.querySelector('.fb-time')?.setAttribute('data-time', `há ${mins} min`);
+    });
+
+    // Interação básica: alternar "Gosto"
+    document.addEventListener('click', (e)=>{
+      if(e.target.tagName==='BUTTON' && e.target.textContent.trim()==='Gosto'){
+        const likeSpan = e.target.closest('.fb-body')?.querySelector('.fb-likes');
+        if(!likeSpan) return;
+        const current = parseInt(likeSpan.getAttribute('data-count')) || 0;
+        const isLiked = e.target.classList.toggle('is-liked');
+        likeSpan.setAttribute('data-count', isLiked ? current+1 : Math.max(0,current-1));
+        e.target.style.color = isLiked ? '#1877f2' : '#65676b';
+      }
+    });
+  })();
+</script>
+
+
     <div class="price">Entre agora no Clube por <strong><span id="btnPrice">149 MZN</span></strong>.</div>
 
     <div class="actions">
@@ -262,5 +359,6 @@
   });
 </script>
 </body></html>
+
 
 
