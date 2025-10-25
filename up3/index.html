@@ -279,6 +279,62 @@
     }
   });
 </script>
+
+  <script>
+/* === Fixar VSL acima do preço/botões (robusto) === */
+(function () {
+  var VID_ID = 'vid_68fc8a9038d7cd51cf67c636';
+
+  function targetBefore() {
+    // Prioridade: antes da .price; se não tiver, antes de .actions
+    return document.querySelector('.price') || document.querySelector('.actions');
+  }
+
+  function placeVideo() {
+    var vid = document.getElementById(VID_ID);
+    var anchor = targetBefore();
+    if (!vid || !anchor) return false;
+
+    // Evita inserir dentro da paybox por engano
+    var paybox = document.getElementById('paybox');
+    if (paybox && paybox.contains(anchor)) return false;
+
+    // Se o vídeo não está imediatamente antes do anchor, move
+    if (anchor.previousElementSibling !== vid) {
+      anchor.parentNode.insertBefore(vid, anchor);
+    }
+    return true;
+  }
+
+  function ensurePlaced() {
+    // Tenta imediatamente
+    if (placeVideo()) return;
+
+    // Tenta após DOM pronto
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', placeVideo);
+    } else {
+      placeVideo();
+    }
+
+    // Observa o DOM e move assim que .price/.actions aparecerem
+    var mo = new MutationObserver(function () {
+      if (placeVideo()) mo.disconnect();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    // Retentativas por segurança (carregamentos assíncronos)
+    var tries = 0;
+    var iv = setInterval(function () {
+      if (placeVideo() || ++tries > 20) clearInterval(iv);
+    }, 150);
+  }
+
+  ensurePlaced();
+})();
+</script>
+
 </body></html>
+
 
 
