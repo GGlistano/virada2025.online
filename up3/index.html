@@ -61,7 +61,7 @@
       <div class="bar">92%</div>
     </div>
 
-  <!-- VÍDEO (ConverteAI) — Upsell 3 -->
+<!-- VSL Upsell 3 (auto-posiciona antes do .price) -->
 <link rel="preconnect" href="https://scripts.converteai.net">
 <link rel="preconnect" href="https://cdn.converteai.net">
 
@@ -71,6 +71,16 @@
 ></div>
 
 <script>
+  // Garante que o bloco do vídeo fique acima do preço/botões
+  (function placeVideoAbovePrice(){
+    var price = document.querySelector('.price');
+    var vid   = document.getElementById('vid_68fc8a9038d7cd51cf67c636');
+    if (price && vid && price.previousElementSibling !== vid) {
+      price.parentNode.insertBefore(vid, price);
+    }
+  })();
+
+  // Carrega o player ConverteAI (sem duplicar)
   (function loadConverteAi(){
     if (document.getElementById('converteai_player_68fc8a9038d7cd51cf67c636')) return;
     var s = document.createElement('script');
@@ -270,4 +280,5 @@
   });
 </script>
 </body></html>
+
 
